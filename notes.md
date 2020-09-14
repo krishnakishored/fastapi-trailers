@@ -14,6 +14,29 @@
     > $ docker-compose up -d --build
     > $ docker-comppose exec web pytest .
 
+1. Async Handlers
+    - Rather than having to go through the trouble of spinning up a task queue (like Celery or RQ) or utilizing threads, FastAPI makes it easy to deliver routes asynchronously. As long as you don't have any blocking I/O calls in the handler, you can simply declare the handler as asynchronous by adding the `async` keyword like so:
+
+1. You can break up and modularize larger projects as well as apply versioning to your API with the `APIRouter`. If you're familiar with Flask, it is equivalent to a Blueprint.
+
+1. SQLAlchemy `engine` - used for communicating with database. `Metadata` instance used for creating db schema. `databases` is an async SQL query builder that works on top of the `SQLAlchemy Core` expression language. It supports the following queries:
+        - database.fetch_all(query)
+        - database.fetch_one(query)
+        - database.iterate(query)
+        - database.execute(query)
+        - database.execute_many(query)
+
+1. ensure the `notes` table is created
+    > $ docker-compose exec db psql --username=hello_fastapi --dbname=hello_fastapi_dev
+    ~~~sh 
+        hello_fastapi_dev=# \l ## list of databases
+        hello_fastapi_dev=# \c hello_fastapi_dev
+        ## You are now connected to database "hello_fastapi_dev" as user "hello_fastapi".
+        hello_fastapi_dev=# \q # quit
+    ~~~
+
+----------------------------------------------------------------------------------------
+
 ### References
 1. https://testdriven.io/blog/fastapi-crud/
 1. https://www.uvicorn.org/#running-with-gunicorn

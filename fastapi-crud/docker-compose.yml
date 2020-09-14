@@ -9,4 +9,16 @@ services:
         ports: 
             - 8002:8000
 
-            
+    db:
+        image: postgres:12.1-alpine
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_USER=hello_fastapi
+            - POSTGRES_PASSWORD=hello_fastapi
+            - POSTGRES_DB=hello_fastapi_dev
+    
+volumes:
+    postgres_data:
+
+                
