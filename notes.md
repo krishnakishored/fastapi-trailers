@@ -54,7 +54,14 @@
             "title": "foo"
         }
 
-
+1.  We can add  metadata to the parameter with `Path`:
+    ~~~py
+    async def read_note(id: int = Path(..., gt=0),):
+        pass
+        # ... - the value is required (Ellipsis)
+        #  gt - the value must be greater than 0
+    ~~~
+    
 
 
 ----------------------------------------------------------------------------------------
