@@ -35,6 +35,28 @@
         hello_fastapi_dev=# \q # quit
     ~~~
 
+1. Pydantic 
+    - Data validation and settings management using python type annotations.
+    - `pydantic` enforces type hints at runtime, and provides user friendly errors when data is invalid.
+
+1. Testing with HTTPie
+ 
+    > http --json POST http://localhost:8002/notes/ title=foo description=bar 
+        HTTP/1.1 201 Created
+        content-length: 42
+        content-type: application/json
+        date: Mon, 14 Sep 2020 16:47:51 GMT
+        server: uvicorn
+
+        {
+            "description": "bar",
+            "id": 1,
+            "title": "foo"
+        }
+
+
+
+
 ----------------------------------------------------------------------------------------
 
 ### References
