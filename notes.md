@@ -70,3 +70,4 @@
 1. https://testdriven.io/blog/fastapi-crud/
 1. https://www.uvicorn.org/#running-with-gunicorn
 1. https://www.toptal.com/python/build-high-performing-apps-with-the-python-fastapi-framework
+1. https://www.youtube.com/watch?v=7t2alSnE2-I
