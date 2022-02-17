@@ -1,0 +1,95 @@
+version: "3.8"
+
+networks:
+  backend:
+    external: true
+
+services:
+  tasker:
+    container_name: tasker
+    init: true
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - TASKER_PORT
+      - LOG_LEVEL
+      - "PYTHONPATH=src:src/common"
+    build: .
+    ports:
+      - ${TASKER_PORT}:40008
+    # command: bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - ./src:/usr/src
+    networks:
+      - backend
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 15s
+
+  celery_worker:
+    container_name: celery_worker
+    init: true
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - "PYTHONPATH=src:src/common"
+    build: .
+    command: "celery -A celery_app worker --loglevel=info"
+    volumes:
+      - ./src:/usr/src
+    networks:
+      - backend
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 15s
+
+  celery_scheduler:
+    container_name: celery_scheduler
+    init: true
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - "PYTHONPATH=src:src/common"
+    build: .
+    command: "celery -A celery_app beat --loglevel=info"
+
+    volumes:
+      - ./src:/usr/src
+    networks:
+      - backend
+    deploy:
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 15s
+
+  flower:
+    container_name: flower
+    init: true
+    build: .
+    command: "celery -A celery_app flower --port=5555"
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - "PYTHONPATH=src:src/common"
+    ports:
+      - ${FLOWER_PORT}:5555
+    volumes:
+      - ./src:/usr/src
+    networks:
+      - backend
+    depends_on:
+      - tasker
+      - celery_worker
+      # - redis
+
