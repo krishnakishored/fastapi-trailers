@@ -2,12 +2,14 @@ from os import path, sys
 from typing import Optional
 
 from celery.result import AsyncResult
-from fastapi import Body, FastAPI, Query
+from fastapi import Body, FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-import tasks
+import src.tasks as tasks
 
+## TODO: the expression returns the full path name of the executing script in a multiplatform-safe way.
+## is it required ???
 sys.path.append(path.dirname(path.abspath(__file__)))
 
 app = FastAPI(
@@ -22,11 +24,6 @@ app = FastAPI(
     #     # RequestValidationError: request_validation_exception_handler,
     # }
 )
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
 
 
 @app.get("/status")
@@ -47,7 +44,7 @@ class CrontabModel(BaseModel):
     month_of_year: str = "*"
 
 
-@app.post("/periodictask")
+@app.post("/periodictasks")
 async def run_periodic_task(crontab: CrontabModel = Body(..., embed=True)):
     # periodic_task_key = tasks.setup_periodic_task(**crontab.__dict__)
     periodic_task_key = tasks.setup_periodic_task()
@@ -57,10 +54,11 @@ async def run_periodic_task(crontab: CrontabModel = Body(..., embed=True)):
     return {"periodic_task_key": periodic_task_key}
 
 
-@app.post("/task")
+@app.post("/tasks")
 async def run_task(
-    delay: Optional[int] = Query(5, description="Default delay is 5 seconds"),
+    # delay: Optional[int] = Query(5, description="Default delay is 5 seconds"),
     numbers: AdditionTask = Body(..., embed=True),
+    delay: Optional[int] = Body(5),
 ):
     # current_task = tasks.delayed_addition.delay(delay, numbers.a, numbers.b)
     current_task = tasks.delayed_addition.apply_async((delay, numbers.a, numbers.b))

@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 EXPOSE 40008
 
-WORKDIR /usr/src
+WORKDIR /usr
 
 COPY requirements.txt /usr/src/requirements.txt
 
@@ -18,4 +18,4 @@ RUN pip3 install --upgrade pip \
 ### enable this production & remove the bind-mount ./src:/usr/src from docker-compose
 # COPY ./src /usr/src 
 
-CMD ["uvicorn", "main:app", "--reload", "--workers", "1", "--host", "0.0.0.0", "--port", "40008" ]
+CMD ["uvicorn", "src.main:app", "--reload", "--workers", "1", "--host", "0.0.0.0", "--port", "40008" ]

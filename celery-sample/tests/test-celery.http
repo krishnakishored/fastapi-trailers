@@ -1,0 +1,42 @@
+#Variables
+@contentType = application/json
+@HOST_LOCAL=http://localhost:40008
+
+@status={{HOST_LOCAL}}/status
+
+
+#####!!!!!!!!!!!!!! Search  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!###
+
+#### Status ############
+GET {{HOST_LOCAL}}/status HTTP/1.1
+
+
+#### GET task status ############
+@task_id=43a09c76-0e18-40a1-9cba-a48c6637f528
+GET {{HOST_LOCAL}}/tasks/{{task_id}} HTTP/1.1
+
+#### Create a task ############
+POST {{HOST_LOCAL}}/tasks  HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+    "numbers": {
+        "a": 5,
+        "b": 10
+    },
+    "delay":10
+}
+
+#### Create a periodic task ############
+POST {{HOST_LOCAL}}/periodictasks HTTP/1.1
+Content-Type: {{contentType}}
+
+{
+  "crontab": {
+    "minute": "*",
+    "hour": "*",
+    "day_of_week": "*",
+    "day_of_month": "*",
+    "month_of_year": "*"
+  }
+}

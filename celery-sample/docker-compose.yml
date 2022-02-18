@@ -13,7 +13,6 @@ services:
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
       - TASKER_PORT
       - LOG_LEVEL
-      - "PYTHONPATH=src:src/common"
     build: .
     ports:
       - ${TASKER_PORT}:40008
@@ -36,9 +35,8 @@ services:
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-      - "PYTHONPATH=src:src/common"
     build: .
-    command: "celery -A celery_app worker --loglevel=info"
+    command: "celery -A src.celery_app worker --loglevel=info"
     volumes:
       - ./src:/usr/src
     networks:
@@ -57,9 +55,8 @@ services:
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-      - "PYTHONPATH=src:src/common"
     build: .
-    command: "celery -A celery_app beat --loglevel=info"
+    command: "celery -A src.celery_app beat --loglevel=info"
 
     volumes:
       - ./src:/usr/src
@@ -77,11 +74,10 @@ services:
     container_name: flower
     init: true
     build: .
-    command: "celery -A celery_app flower --port=5555"
+    command: "celery -A src.celery_app flower --port=5555"
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-      - "PYTHONPATH=src:src/common"
     ports:
       - ${FLOWER_PORT}:5555
     volumes:

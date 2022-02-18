@@ -2,7 +2,7 @@ import time
 
 from celery.schedules import crontab
 
-from celery_app import app
+from src.celery_app import app
 
 
 @app.on_after_finalize.connect
@@ -25,7 +25,7 @@ def setup_periodic_task(**kwargs):
         # ),
         crontab(minute="*"),
         # crontab(hour=7, minute=30, day_of_week=1),
-        mul.s(4, 9),
+        add.s(41, 999),
     )
     return periodic_task_key
 
