@@ -40,3 +40,8 @@
 1. https://medium.com/thelorry-product-tech-data/celery-asynchronous-task-queue-with-fastapi-flower-monitoring-tool-e7135bd0479f
 1. https://docs.celeryproject.org/en/stable/getting-started/backends-and-brokers/index.html#broker-overview
 1. https://stackoverflow.com/questions/10194975/how-to-dynamically-add-remove-periodic-tasks-to-celery-celerybeat
+
+
+
+----------------------------------------------------------------
+
