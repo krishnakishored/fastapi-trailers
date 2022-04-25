@@ -1,6 +1,9 @@
 import time
 
 from celery.schedules import crontab
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
 
 from src.celery_app import app
 
@@ -30,13 +33,16 @@ def setup_periodic_task(**kwargs):
     return periodic_task_key
 
 
+# @app.task(bind=True, retry_limit=4, default_retry_delay=10)
 @app.task
 def add(x, y):
+    logger.info(f"Adds {x} + {y}")
     return x + y
 
 
 @app.task
 def mul(x, y):
+    logger.info(f"Multiplies {x} * {y}")
     return x * y
 
 
@@ -46,6 +52,7 @@ def xsum(numbers):
 
 
 @app.task(name="delayed_addition")
-def delayed_addition(delay, a, b):
+def delayed_addition(delay, x, y):
+    logger.info(f"delayed addition {x} + {y} with delay:{delay}")
     time.sleep(delay)
-    return a + b
+    return x + y

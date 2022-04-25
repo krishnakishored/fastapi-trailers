@@ -7,13 +7,8 @@ settings: Settings = get_settings()
 # from app.api import notes, ping
 # from app.db import database, engine, metadata
 # metadata.create_all(engine)
-
-from typing import Optional
-
-from pydantic import BaseModel
-
 from db import models
-from db.database import get_db_engine, get_db_tables
+from db.database import get_db_engine, get_db_tables, get_gis_databases
 
 # tags_metadata = [
 #     {
@@ -50,7 +45,7 @@ def create_database(
 def get_database_list(
     # Query
 ):
-    list_of_databases = []
+    list_of_databases = get_gis_databases()
     return {"list_of_databases": list_of_databases}
 
 
@@ -71,7 +66,7 @@ def create_tables(
 
 @app.get("/tables")
 def get_table_list(
-    db_name: str = Query("fastapi_crud", description="database name"),
+    db_name: str = Query("example01", description="database name"),
 ):
     ## TODO: handle db_name invalid
     list_of_tables = get_db_tables(db_name)

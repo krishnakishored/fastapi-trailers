@@ -1,26 +1,23 @@
-FROM python:3.8.1-alpine
+FROM python:3.10.2-slim-buster
 
-#set work directory
-WORKDIR /usr/src/app
 
-#set environment variables
-# PYTHONDONTWRITEBYTECODE: Prevents Python from writing pyc files to disc (equivalent to python -B option)
-# PYTHONUNBUFFERED: Prevents Python from buffering stdout and stderr (equivalent to python -u option)
+# Prevents Python from writing pyc files to disc. Equivalent to python -B
 ENV PYTHONDONTWRITEBYTECODE 1
+# Prevents Python from buffering stdout and stderr. Equivalent to python -u
 ENV PYTHONUNBUFFERED 1
-
-#copy requirements file
-COPY ./requirements.txt /usr/src/app/requirements.txt
+EXPOSE 60008
 
 
-# install dependencies
-RUN set -eux \
-    && apk add --no-cache --virtual .build-deps build-base \
-        libressl-dev libffi-dev gcc musl-dev python3-dev \
-        postgresql-dev \
-    && pip install --upgrade pip setuptools wheel \
-    && pip install -r /usr/src/app/requirements.txt \
-    && rm -rf /root/.cache/pip
+WORKDIR /usr
 
-# copy project
-COPY . /usr/src/app/
+COPY requirements.txt /usr/src/requirements.txt
+
+
+
+RUN pip3 install --upgrade pip \
+    &&  pip install --no-cache --ignore-installed -r /usr/src/requirements.txt
+
+### enable this production & remove the bind-mount ./src:/usr/src from docker-compose
+# COPY ./src /usr/src 
+
+CMD ["uvicorn", "src.main:app", "--reload", "--workers", "1", "--host", "0.0.0.0", "--port", "40008" ]

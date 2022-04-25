@@ -1,26 +1,55 @@
-version: '3.7'
+version: '3.8'
+
+## enable this for named_volume
+# volumes:
+#     postgres_data:
+#         driver: local
+
+networks:
+    backend:
+        external: true
 
 services:
-    web:
-        build: ./src
-        command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
-        volumes: 
-            - ./src/:/usr/src/app/
-        ports: 
-            - 8002:8000
+    fastapi-crud:
+        container_name: fastapi-crud
+        init: true
         environment:
-            - DATABASE_URL=postgresql://hello_fastapi:hello_fastapi@db/hello_fastapi_dev
-
-    db:
-        image: postgres:12.1-alpine
+            - FASTAPI_CRUD_PORT
+            - LOG_LEVEL
+        build: .
+        ports:
+            - ${FASTAPI_CRUD_PORT}:60008
+        # command: bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
         volumes:
-            - postgres_data:/var/lib/postgresql/data/
-        environment:
-            - POSTGRES_USER=hello_fastapi
-            - POSTGRES_PASSWORD=hello_fastapi
-            - POSTGRES_DB=hello_fastapi_dev
-    
-volumes:
-    postgres_data:
+            - ./src:/usr/src
+            # - postgres_data:/var/lib/postgresql/data/
+        networks:
+            - backend
+        deploy:
+            restart_policy:
+                condition: on-failure
+            update_config:
+                parallelism: 1
+                failure_action: rollback
+    #             delay: 15s
+    # web:
+    #     build: .
+    #     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    #     volumes:
+    #         - ./src/:/usr/src/app/
+    #     ports:
+    #         - 8002:8000
+    #     environment:
+    #         - DATABASE_URL=postgresql://hello_fastapi:hello_fastapi@db/hello_fastapi_dev
+    # db:
+    #     image: postgres:12.1-alpine
+    #     volumes:
+    #         - postgres_data:/var/lib/postgresql/data/
+    #     environment:
+    #         - POSTGRES_USER=hello_fastapi
+    #         - POSTGRES_PASSWORD=hello_fastapi
+    #         - POSTGRES_DB=hello_fastapi_dev
 
-                
+    # volumes:
+    #     postgres_data:
+

@@ -30,11 +30,12 @@ def get_db_engine(db_name: str = settings.PG_DBNAME, create_db=False):
     try:
         if create_db is not False and not database_exists(SQLALCHEMY_DATABASE_URL):
             create_database(SQLALCHEMY_DATABASE_URL)
+            # install the extensions - postgis
+            create_db_extensions(db_name)
+
     except (SQLAlchemyError, DBAPIError, OperationalError) as e:
         # TODO
-        print("####################")
         print(e)
-        print("####################")
         # TODO: handle it properly
     else:
         db_engine = create_engine(
@@ -80,7 +81,7 @@ def get_db_tables(db_name: str = settings.PG_DBNAME):
     return sqlalchemy_inspector.get_table_names()
 
 
-def get_pg_databases():
+def get_gis_databases():
     """returns list of databases owned by user
 
     ## datname - The name of the database.
@@ -107,13 +108,55 @@ def get_pg_databases():
         return database_list
 
 
-#     return db_list
+def create_db_extensions(db_name):
+    """
+    add pg_extensions for GIS
+    # TODO: Add schema while adding extensions
+    SELECT name, default_version,installed_version FROM pg_available_extensions
+    """
+
+    engine = get_db_engine(db_name)
+    # with engine.connect() as connection:
+    postgis_ext_version = "3.3.0dev"
+    fuzzystrmatch_ext_version = "1.1"
+    result = {}
+    print(f"creating extensions for DB:{db_name}")
+    with engine.begin() as connection:
+        statement_fuzzystrmatch_ext = text(
+            f"CREATE EXTENSION IF NOT EXISTS fuzzystrmatch VERSION '{fuzzystrmatch_ext_version}'"
+        )
+        result["fuzzystrmatch"] = connection.execute(statement_fuzzystrmatch_ext)
+
+        statement_postgis_ext = text(
+            f"CREATE EXTENSION IF NOT EXISTS postgis VERSION '{postgis_ext_version}'"
+        )
+        result["postgis"] = connection.execute(statement_postgis_ext)
+
+        statement_postgis_tiger_geocoder_ext = text(
+            f"CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder VERSION '{postgis_ext_version}'"
+        )
+        result["postgis_tiger_geocoder"] = connection.execute(
+            statement_postgis_tiger_geocoder_ext
+        )
+        statement_postgis_topology_ext = text(
+            f"CREATE EXTENSION IF NOT EXISTS postgis_topology VERSION '{postgis_ext_version}'"
+        )
+        result["postgis_topology"] = connection.execute(statement_postgis_topology_ext)
+        return result
+
+
+# CREATE EXTENSION IF NOT EXISTS postgis_topology
+#     SCHEMA topology
+#     VERSION "3.0.3";
 
 
 if __name__ == "__main__":
     # session = get_db()
-    # db_name = "example01"
+    db_name = "example01"
     # list_of_tables = get_db_tables(db_name)
     # print(list_of_tables)
-    list_of_databases = get_pg_databases()
-    print(list_of_databases)
+    # list_of_databases = get_gis_databases()
+    # print(list_of_databases)
+
+    result = create_db_extensions(db_name)
+    print(result)
