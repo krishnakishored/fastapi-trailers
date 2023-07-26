@@ -1,0 +1,25 @@
+aiohttp
+asyncio
+fastapi
+pydantic
+pydantic-settings
+uvicorn
+gunicorn
+python-dotenv
+
+# TODO
+# celery
+# eventlet
+# flower
+# grpcio
+# grpcio-tools
+# redis
+# ujson
+# urllib3
+
+### for development only ###
+# black
+# pipdeptree
+# debugpy
+# flake8
+# pytest
