@@ -13,7 +13,7 @@ settings: Settings = get_settings()
 
 tags_metadata = [
     {
-        "name": "search",
+        "name": "Search",
         "description": "The Search API enables proximity search on free-form"
         + "text for Points of Interest (POI), Businesses, and addresses."
         + "Results are ranked by relevance based on text pattern match and "
@@ -96,9 +96,8 @@ app.include_router(search_api.router, tags=["Search"])
 if __name__ == "__main__":
     import uvicorn
 
-    # TODO: read the app version
-    # print(f"Running the version:{settings.APP_VERSION}")
-    # print(f"quester is running on {settings.HOST}:{settings.PORT}")
+    print(f"Running the version:{settings.APP_VERSION}")
+    print(f"quester is running on {settings.HOST}:{settings.PORT}")
     uvicorn.run(
         "main:app",
         host=settings.HOST,

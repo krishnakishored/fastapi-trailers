@@ -29,9 +29,9 @@ async def search(
     place_id: Optional[str] = Query(
         None, description="Unique Identifier to retrieve the place"
     ),
-    iterator_length: Optional[int] = Query(
+    resp_max_limit: Optional[int] = Query(
         10,
-        description="Number of matching records in the resu. Default is 10",
+        description="Max num of matching records in the result. Default is 10",
     ),
 ):
     # # TODO: log the request using Depends or middleware
@@ -57,9 +57,9 @@ async def search(
             #   - house number & street will be part of the formatted address
             # language is set to 'en' by default
             response = await search_core(
-                lat_lon_string=search_center,
+                lat_lon=search_center,
                 search_term=query if query else place_id,
-                iterator_length=iterator_length,
+                resp_max_limit=resp_max_limit,
             )
     except (QuesterBadRequestError, ValueError, LookupError) as error:
         logger.exception(error)

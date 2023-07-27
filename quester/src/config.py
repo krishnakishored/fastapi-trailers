@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     # Workers silent for more than this many seconds are killed and restarted.
     GUNICORN_TIMEOUT: int = 120
 
+    SOLR_BASE_URL: str = "http://localhost:8983"
+
     class Config:
         env_file = ".env"
 
