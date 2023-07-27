@@ -1,4 +1,5 @@
 # from pathlib import Path
+from math import atan2, cos, radians, sin, sqrt
 
 from fastapi import Request
 
@@ -88,3 +89,52 @@ def is_valid_lat_lon(lat_lon_string: str) -> bool:
     except (ValueError, TypeError) as error:
         logger.error(f"Invalid lat, lon: {error}")
         return False
+
+
+def line_of_sight_distance(lat_lon_1, lat_lon_2):
+    # approximate radius of Earth in meters
+    R = 6378137
+    lat1, lon1 = retrieve_lat_lon(lat_lon_1)
+    lat2, lon2 = retrieve_lat_lon(lat_lon_2)
+    # convert degrees to radians
+    lat1 = radians(float(lat1))
+    lon1 = radians(float(lon1))
+    lat2 = radians(float(lat2))
+    lon2 = radians(float(lon2))
+    # using Haversine formula to calculate distance
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    distance = R * c
+
+    return distance
+
+
+def full_address_formatter(
+    streetnum=None,
+    street1=None,
+    xstreet=None,
+    city=None,
+    state=None,
+    postal=None,
+    country_code="USA",
+    area_name=None,
+):
+    formatted_address = ""
+
+    if area_name:
+        # Area matches have no street info
+        formatted_address = area_name + ", "
+    else:
+        # Street Address
+        if streetnum:
+            formatted_address += str(streetnum) + " "
+
+        if xstreet and street1:
+            formatted_address += str(street1) + " & " + str(xstreet) + ", "
+        elif street1:
+            formatted_address += str(street1) + ", "
+
+    formatted_address += f"{city}, {state} {postal}, {country_code}"
+    return formatted_address
