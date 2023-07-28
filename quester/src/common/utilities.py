@@ -5,7 +5,7 @@ from fastapi import Request
 
 from common.exceptions import QuesterBadRequestError
 from common.logger import get_logger
-from src.config import Settings, get_settings
+from config import Settings, get_settings
 
 logger = get_logger(__name__, log_type="json")
 
@@ -84,7 +84,7 @@ def is_valid_lat_lon(lat_lon_string: str) -> bool:
 
     try:
         lat, lon = retrieve_lat_lon(lat_lon_string)
-        logger.debug(f"valid lat,lon:({lat},{lon})")
+        # logger.debug(f"valid lat,lon:({lat},{lon})")
         return True
     except (ValueError, TypeError) as error:
         logger.error(f"Invalid lat, lon: {error}")

@@ -35,7 +35,9 @@ async def search(
     ),
 ):
     # # TODO: log the request using Depends or middleware
-
+    logger.info(
+        f"query:{query},search_center:{search_center},place_id:{place_id}"
+    )
     # trim the string of unwanted characters
     query = string_pruner(query) if query is not None else ""
     response = {}
@@ -58,7 +60,7 @@ async def search(
             # language is set to 'en' by default
             response = await search_core(
                 lat_lon=search_center,
-                search_term=query if query else place_id,
+                search_term=f"place:{query}" if query else f"id:{place_id}",
                 resp_max_limit=resp_max_limit,
             )
     except (QuesterBadRequestError, ValueError, LookupError) as error:

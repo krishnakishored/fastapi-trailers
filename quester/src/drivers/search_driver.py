@@ -141,7 +141,7 @@ async def search_core(
         solr_req_url = query_builder.with_collection(
             collection_name
         ).spatial_search(
-            search_term=f"place:{search_term}",
+            search_term=search_term,
             lat_lon=lat_lon,
             # set the radius parameter to exclude distance limitation for CSZ
             spatial_field="centroid",

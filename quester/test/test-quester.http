@@ -6,3 +6,8 @@
 ##################### STATUS ######################################### 
 GET {{quester_url}}/status  HTTP/1.1
 
+####  SEARCH ######
+GET {{quester_url}}/search?api_key=SampleAPIKey
+&search_center=33.663664, -117.9195484
+&query=Anaheim
+&resp_max_limit=10

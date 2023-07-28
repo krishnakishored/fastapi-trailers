@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  quester:
+    image: quester:${APP_VERSION}
+    build:
+      context: ./
+    init: true
+    environment:
+      - HOST
+      - PORT
+      - LOG_LEVEL
+      - SOLR_BASE_URL
+      # - SOLR_DISTANCE_LIMIT
+      - APP_NAME
+      - APP_VERSION
+    ports:
+      - "${PORT}:7600"
+    deploy:
+      mode: replicated
+      restart_policy:
+        condition: on-failure
+      # update_config:
+      #   parallelism: 1
+      #   failure_action: rollback
+      #   delay: 15s
+      # replicas: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    # networks:
+    #   - cross_stack
+# networks:
+#   cross_stack:
+#     external: true
